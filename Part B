@@ -33,7 +33,7 @@ public class StudentSerializationDemo {
         // --- Serialization ---
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
             oos.writeObject(student);
-            System.out.println("✅ Student object serialized to " + filename);
+            System.out.println("Student object serialized to " + filename);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -41,7 +41,7 @@ public class StudentSerializationDemo {
         // --- Deserialization ---
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
             Student deserializedStudent = (Student) ois.readObject();
-            System.out.println("\n✅ Student object deserialized from " + filename);
+            System.out.println("\n Student object deserialized from " + filename);
             deserializedStudent.displayInfo();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
