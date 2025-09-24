@@ -1,48 +1,42 @@
 import java.io.*;
 
-// Student class implementing Serializable
 class Student implements Serializable {
-    private static final long serialVersionUID = 1L; // version control for serialization
+    private static final long serialVersionUID = 1L;
 
     private int studentID;
     private String name;
-    private double grade;
+    private String grade;
 
-    public Student(int studentID, String name, double grade) {
+    public Student(int studentID, String name, String grade) {
         this.studentID = studentID;
         this.name = name;
         this.grade = grade;
     }
 
-    // Method to display student details
-    public void displayInfo() {
+    public void display() {
         System.out.println("Student ID: " + studentID);
         System.out.println("Name: " + name);
         System.out.println("Grade: " + grade);
     }
 }
 
-public class StudentSerializationDemo {
-
+public class B {
     public static void main(String[] args) {
         String filename = "student.ser";
 
-        // Create a Student object
-        Student student = new Student(101, "Alice Johnson", 89.5);
+        Student student = new Student(101, "Rishi Kumar", "A");
 
-        // --- Serialization ---
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
             oos.writeObject(student);
-            System.out.println("Student object serialized to " + filename);
+            System.out.println("Student object serialized and saved to " + filename);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        // --- Deserialization ---
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
             Student deserializedStudent = (Student) ois.readObject();
-            System.out.println("\n Student object deserialized from " + filename);
-            deserializedStudent.displayInfo();
+            System.out.println("\nDeserialized Student Data:");
+            deserializedStudent.display();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
