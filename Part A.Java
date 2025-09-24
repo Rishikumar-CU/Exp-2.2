@@ -1,36 +1,55 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
-public class SumOfIntegersAutoboxing {
+public class A {
 
     public static void main(String[] args) {
-        // Scanner for user input
         Scanner scanner = new Scanner(System.in);
 
-        // Collection to store Integer objects (autoboxing will happen here)
-        ArrayList<Integer> numbers = new ArrayList<>();
+        System.out.println("Enter a list of integers separated by spaces (e.g., 10 20 30 40):");
 
-        System.out.println("Enter integers separated by spaces:");
         String inputLine = scanner.nextLine();
 
-        // Split the input into individual string numbers
-        String[] stringNumbers = inputLine.split("\\s+");
+        String[] numberStrings = inputLine.split("\\s+");
 
-        // Parse each string to int, autobox into Integer, and store in ArrayList
-        for (String strNum : stringNumbers) {
-            int primitiveValue = Integer.parseInt(strNum); // String → int
-            numbers.add(primitiveValue); // int → Integer (autoboxing)
+        List<Integer> integerList = new ArrayList<>();
+
+        System.out.println("\n--- Processing Inputs ---");
+
+        for (String numStr : numberStrings) {
+            try {
+                int primitiveInt = Integer.parseInt(numStr);
+                System.out.println("Parsed string \"" + numStr + "\" to primitive int: " + primitiveInt);
+
+                integerList.add(primitiveInt);
+                System.out.println("Autoboxed " + primitiveInt + " to an Integer object and added to the list.");
+
+            } catch (NumberFormatException e) {
+                System.out.println("Skipping invalid input: \"" + numStr + "\" is not a valid integer.");
+            }
         }
 
-        // Calculate sum using enhanced for-loop (unboxing happens here)
-        int sum = 0;
-        for (Integer num : numbers) {
-            sum += num; // Integer → int (unboxing)
-        }
+        int totalSum = calculateSum(integerList);
 
-        // Display the result
-        System.out.println("Sum of integers: " + sum);
+        System.out.println("\n--- Calculation Result ---");
+        System.out.println("Integers stored in the list: " + integerList);
+        System.out.println("The final sum is: " + totalSum);
 
         scanner.close();
     }
+
+    public static int calculateSum(List<Integer> numbers) {
+        int sum = 0;
+
+        System.out.println("\n--- Calculating Sum ---");
+
+        for (Integer numberObject : numbers) {
+            sum += numberObject;
+            System.out.println("Unboxed " + numberObject + " to a primitive int and added to sum. Current sum: " + sum);
+        }
+        return sum;
+    }
 }
+
+
