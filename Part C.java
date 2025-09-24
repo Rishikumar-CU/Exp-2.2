@@ -1,106 +1,101 @@
 import java.io.*;
-import java.util.Scanner;
+import java.util.*;
 
-class Employee {
-    private String name;
+class Employee implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int id;
+    private String name;
     private String designation;
     private double salary;
 
-    public Employee(String name, int id, String designation, double salary) {
-        this.name = name;
+    public Employee(int id, String name, String designation, double salary) {
         this.id = id;
+        this.name = name;
         this.designation = designation;
         this.salary = salary;
     }
 
-    @Override
-    public String toString() {
-        return id + "," + name + "," + designation + "," + salary;
-    }
-
-    public String displayFormat() {
-        return String.format("ID: %d | Name: %s | Designation: %s | Salary: %.2f",
+    public void display() {
+        System.out.printf("ID: %d | Name: %s | Designation: %s | Salary: %.2f%n",
                 id, name, designation, salary);
     }
 }
 
-public class EmployeeManagementSystem {
-    private static final String FILE_NAME = "employees.txt";
+public class C {
+    private static final String FILE_NAME = "employees.ser";
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int choice;
+        Scanner sc = new Scanner(System.in);
+        List<Employee> employees = loadEmployees();
 
-        do {
-            System.out.println("\n=== Employee Management System ===");
-            System.out.println("1. Add Employee");
+        while (true) {
+            System.out.println("\n===== Employee Management System =====");
+            System.out.println("1. Add an Employee");
             System.out.println("2. Display All Employees");
             System.out.println("3. Exit");
             System.out.print("Enter your choice: ");
-            choice = Integer.parseInt(scanner.nextLine());
+            int choice = sc.nextInt();
+            sc.nextLine();
 
             switch (choice) {
                 case 1:
-                    addEmployee(scanner);
+                    System.out.print("Enter Employee ID: ");
+                    int id = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Enter Name: ");
+                    String name = sc.nextLine();
+                    System.out.print("Enter Designation: ");
+                    String designation = sc.nextLine();
+                    System.out.print("Enter Salary: ");
+                    double salary = sc.nextDouble();
+                    sc.nextLine();
+
+                    Employee emp = new Employee(id, name, designation, salary);
+                    employees.add(emp);
+                    saveEmployees(employees);
+                    System.out.println("Employee added successfully.");
                     break;
+
                 case 2:
-                    displayEmployees();
+                    if (employees.isEmpty()) {
+                        System.out.println("No employees found.");
+                    } else {
+                        System.out.println("\n--- Employee Records ---");
+                        for (Employee e : employees) {
+                            e.display();
+                        }
+                    }
                     break;
+
                 case 3:
-                    System.out.println("Exiting application... Goodbye!");
-                    break;
+                    System.out.println("Exiting application...");
+                    sc.close();
+                    return;
+
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Invalid choice! Try again.");
             }
-        } while (choice != 3);
-
-        scanner.close();
-    }
-
-    private static void addEmployee(Scanner scanner) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
-            System.out.print("Enter Employee ID: ");
-            int id = Integer.parseInt(scanner.nextLine());
-
-            System.out.print("Enter Employee Name: ");
-            String name = scanner.nextLine();
-
-            System.out.print("Enter Designation: ");
-            String designation = scanner.nextLine();
-
-            System.out.print("Enter Salary: ");
-            double salary = Double.parseDouble(scanner.nextLine());
-
-            Employee emp = new Employee(name, id, designation, salary);
-            writer.write(emp.toString());
-            writer.newLine();
-
-            System.out.println(" Employee added successfully!");
-        } catch (IOException e) {
-            System.out.println(" Error writing to file: " + e.getMessage());
         }
     }
 
-    private static void displayEmployees() {
+    private static List<Employee> loadEmployees() {
         File file = new File(FILE_NAME);
         if (!file.exists()) {
-            System.out.println("No employee records found.");
-            return;
+            return new ArrayList<>();
         }
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            return (List<Employee>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            return new ArrayList<>();
+        }
+    }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
-            String line;
-            System.out.println("\n--- Employee Records ---");
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data.length == 4) {
-                    Employee emp = new Employee(data[1], Integer.parseInt(data[0]), data[2], Double.parseDouble(data[3]));
-                    System.out.println(emp.displayFormat());
-                }
-            }
+    private static void saveEmployees(List<Employee> employees) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
+            oos.writeObject(employees);
         } catch (IOException e) {
-            System.out.println(" Error reading from file: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
+
